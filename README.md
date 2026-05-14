@@ -15,3 +15,7 @@ I was originally going to have it ask the user for all the variables but I reali
 Liberty (that's their discord user idk what their name is) for answering my questions.
 The indian code youtubers who had 120 views for my weird questions.
 And finally I thank the people who asked the same questions I had on stackoverflow 15 years ago.
+
+# Credits
+Helldive.live api read.me : https://github.com/martin-dzhonov/HelldiversSnapshot_BE/blob/master/README.md
+Helldive.live : https://helldive.live/home
