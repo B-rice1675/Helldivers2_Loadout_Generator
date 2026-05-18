@@ -1,48 +1,70 @@
 from bs4 import BeautifulSoup
+from collections import defaultdict
 import requests
-import re
 import json
 
-print('Hello User! \n You wish to generate a loadout for your fight against the undemocratic enemies of Super Earth so I shall provide.\n I just need to know what faction you will be fighting.\n')
+BASE_URL = 'https://utm7j5pjvi.us-east-1.awsapprunner.com/'
 
-base_url = 'https://utm7j5pjvi.us-east-1.awsapprunner.com/'
-faction = 'faction=' + input('What faction do you want to fight? \n terminid, automaton, or illuminate ')
-patch_id = 'patch_id=11'
+def fetch_items(faction, patch_id, difficulty, mission, modifier, item_type):
+    url = (
+        f"{BASE_URL}items_stats?"
+        f"{faction}&{patch_id}&{difficulty}&{mission}&{modifier}&type={item_type}"
+    )
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    data = json.loads(soup.get_text())
+    return data['items']
+
+def fetch_categories(endpoint):
+    url = f"{BASE_URL}{endpoint}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    data = json.loads(soup.get_text())
+    return {key: item['category'] for key, item in data['items'].items()}
+
+def print_grouped(stats, category_map, top_n=4):
+    grouped = defaultdict(dict)
+    for key, item in stats.items():
+        category = category_map.get(key, 'Unknown')
+        grouped[category][key] = item
+    for category, group in grouped.items():
+        if category == 'Unknown':
+            continue
+        print(f"\n  [{category}]")
+        for key, item in list(group.items())[:top_n]:
+            print(f"    {key.replace('_', ' ')} — pick rate: {item['loadouts_percentage']}%")
+
+def print_flat(stats, top_n=3):
+    for key, item in list(stats.items())[:top_n]:
+        print(f"  {key.replace('_', ' ')} — pick rate: {item['loadouts_percentage']}%")
+
+
+print(
+    "Hello User!\n"
+    "You wish to generate a loadout for your fight against the undemocratic enemies of Super Earth,\n"
+    "so I shall provide. I just need to know what faction you will be fighting.\n"
+)
+
+faction    = 'faction=' + input('What faction do you want to fight?\n  terminid, automaton, or illuminate: ').strip().lower()
+patch_id   = 'patch_id=11'
 difficulty = 'difficulty=0'
-mission = 'mission=All'
-modifier = 'modifier=ALL'
-tipe = ['type=strategem','type=weapons','type=armor']
+mission    = 'mission=All'
+modifier   = 'modifier=ALL'
 
-url = base_url + 'items_stats?' + faction + '&' + patch_id + '&' + difficulty + '&' + mission + '&' + modifier + '&' + tipe[0]
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "html.parser")
-text = soup.get_text()
-data = json.loads(text)
-strategems = data['items']
+strat_categories  = fetch_categories('stratagem_types')
+weapon_categories = fetch_categories('weapon_types')
 
-for key, strategem in list(strategems.items())[0:4]:
-    print(key.replace('_',' '), 'with a pick rate of: ',  strategem["loadouts_percentage"], '%')
+# --- Stratagems ---
+print("=== Top Stratagems ===")
+strat_stats = fetch_items(faction, patch_id, difficulty, mission, modifier, 'strategem')
+print_grouped(strat_stats, strat_categories, top_n=4)
 
-print('')
+# --- Weapons ---
+print("\n=== Top Weapons ===")
+weapon_stats = fetch_items(faction, patch_id, difficulty, mission, modifier, 'weapons')
+print_grouped(weapon_stats, weapon_categories, top_n=4)
 
-url = base_url + 'items_stats?' + faction + '&' + patch_id + '&' + difficulty + '&' + mission + '&' + modifier + '&' + tipe[1]
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "html.parser")
-text = soup.get_text()
-data = json.loads(text)
-weapons = data['items']
-
-for key, weapon in list(weapons.items())[0:5]:
-    print(key.replace('_',' '), 'with a pick rate of: ',  weapon["loadouts_percentage"], '%')
-
-print('')
-
-url = base_url + 'items_stats?' + faction + '&' + patch_id + '&' + difficulty + '&' + mission + '&' + modifier + '&' + tipe[2]
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "html.parser")
-text = soup.get_text()
-data = json.loads(text)
-armours = data['items']
-
-for key, armour in list(armours.items())[0:1]:
-    print(key.replace('_',' '), 'with a pick rate of: ',  armour["loadouts_percentage"], '%')
+# --- Armour ---
+print("\n=== Top Armour ===")
+armour_stats = fetch_items(faction, patch_id, difficulty, mission, modifier, 'armor')
+print_flat(armour_stats, top_n=4)
