@@ -4,7 +4,7 @@ This is supposed to be a simple project for my Data Science final but I didn't h
 
 # Usage
 
-You just put in the faction you're going to be fighting and it will give you the top 10 most picked, strategems, weapons, and armours according to helldive.live
+You just put in the faction you're going to be fighting and it will give you the top 4 most picked, strategems (from each category), weapons (from each category), and armors according to helldive.live while showing their pick rates
 
 # Issues
 
@@ -13,7 +13,7 @@ I was originally going to have it ask the user for all the variables but I reali
 
 # Updates in Progress
 
-Right now I working to make it less of code soup and brute force by implemening json (as it was originally intended I assume)
+Making a GUI
 
 # Thanks to:
 Liberty (that's their discord user idk what their name is) for answering my questions.
