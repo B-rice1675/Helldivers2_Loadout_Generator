@@ -8,7 +8,6 @@ You just put in the faction you're going to be fighting and it will give you the
 
 # Issues
 
-When it comes to getting data from the factions the automaton don't have any data for helldive.live patch 12 (which is the most up to date currently) so I have it grab data from patch 11 for all the faction
 I was originally going to have it ask the user for all the variables but I realized not everyone wants to deal with that so I just made all of them the value that has the most amount of data, I will make a version in the future that asks the user for more information but I'm super tired and burnt out right now even though I haven't done all that much (I worked for hours on fixing bugs with stuff that didn't even make it in to this "release")
 
 # Updates in Progress
