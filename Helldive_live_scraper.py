@@ -46,7 +46,7 @@ print(
 )
 
 faction    = 'faction=' + input('What faction do you want to fight?\n  terminid, automaton, or illuminate: ').strip().lower()
-patch_id   = 'patch_id=11'
+patch_id   = 'patch_id=12'
 difficulty = 'difficulty=0'
 mission    = 'mission=All'
 modifier   = 'modifier=ALL'
